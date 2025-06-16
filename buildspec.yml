@@ -1,31 +1,40 @@
 version: 0.2
-
 env:
   parameter-store:
     DOCKER_REGISTRY_USERNAME: /myapp/docker-credentials/username
     DOCKER_REGISTRY_PASSWORD: /myapp/docker-credentials/password
     DOCKER_REGISTRY_URL: /myapp/docker-registry/url
+
 phases:
   install:
     runtime-versions:
       python: 3.11
   pre_build:
     commands:
-      - echo "Installing dependencies..."
-      - pip install -r day-13/simple-python-app/requirements.txt
+      - echo "Installing dependencies.."
+       # Install Trivy
+      - wget https://github.com/aquasecurity/trivy/releases/download/v0.50.1/trivy_0.50.1_Linux-64bit.tar.gz
+      - tar -xzf trivy_0.50.1_Linux-64bit.tar.gz
+      - chmod +x trivy
+       # Install requirements.txt
+      - pip install -r requirements.txt
+       # Install bandit
+      - pip install bandit
+      - bandit -r simple-python-flask-app/ -ll
   build:
     commands:
       - echo "Running tests..."
-      - cd day-13/simple-python-app/
       - echo "Building Docker image..."
       - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
       - docker build -t "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest" .
+       # Trivy command - But continues even if critical CVEs found
+      - ./trivy image --severity CRITICAL "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest" || echo "Trivy found critical vulnerabilities - continuing build for now"
       - docker push "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest"
   post_build:
     commands:
       - echo "Build completed successfully!"
 artifacts:
   files:
-    - '**/*'
-  base-directory: ../simple-python-app
+   - '**/*'
+  base-directory: ../simple-python-flask-app
 
