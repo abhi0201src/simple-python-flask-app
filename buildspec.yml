@@ -36,4 +36,5 @@ phases:
 artifacts:
   files:
    - '**/*'
-  base-directory: ../simple-python-flask-app
+  base-directory: simple-python-flask-app
+   - echo "Artifact stored successfully!"
