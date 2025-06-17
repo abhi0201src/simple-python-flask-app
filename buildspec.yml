@@ -12,13 +12,13 @@ phases:
   pre_build:
     commands:
       - echo "Installing dependencies.."
-       # Install Trivy
+      # Install Trivy
       - wget https://github.com/aquasecurity/trivy/releases/download/v0.50.1/trivy_0.50.1_Linux-64bit.tar.gz
       - tar -xzf trivy_0.50.1_Linux-64bit.tar.gz
       - chmod +x trivy
-       # Install requirements.txt
+      # Install requirements.txt
       - pip install -r requirements.txt
-       # Install bandit
+      # Install bandit
       - pip install bandit
       - bandit -r simple-python-flask-app/ -ll
   build:
@@ -27,7 +27,7 @@ phases:
       - echo "Building Docker image..."
       - echo "$DOCKER_REGISTRY_PASSWORD" | docker login -u "$DOCKER_REGISTRY_USERNAME" --password-stdin "$DOCKER_REGISTRY_URL"
       - docker build -t "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest" .
-       # Trivy command - But continues even if critical CVEs found
+      # Trivy command - But continues even if critical CVEs found
       - ./trivy image --severity CRITICAL "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest" || echo "Trivy found critical vulnerabilities - continuing build for now"
       - docker push "$DOCKER_REGISTRY_URL/$DOCKER_REGISTRY_USERNAME/simple-python-flask-app:latest"
   post_build:
@@ -36,5 +36,5 @@ phases:
 artifacts:
   files:
    - '**/*'
-  base-directory: ../simple-python-flask-app
+  base-directory: simple-python-flask-app
 
