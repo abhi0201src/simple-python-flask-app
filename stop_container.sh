@@ -9,3 +9,4 @@ if [ ! -z "$CONTAINER_ID" ]; then
   docker stop $CONTAINER_ID
   docker rm $CONTAINER_ID
   echo "Container stopped and removed."
+fi
