@@ -38,6 +38,6 @@ phases:
 artifacts:
   files:
    - '**/*'
-  base-directory: simple-python-flask-app
+  base-directory: ../simple-python-flask-app
   name: 'my-artifact'  # Explicit name avoids AWS auto-generated names
     - echo "Artifact stored succesfully"
