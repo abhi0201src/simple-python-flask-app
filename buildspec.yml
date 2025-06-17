@@ -11,6 +11,8 @@ phases:
       python: 3.11
   pre_build:
     commands:
+      - echo "Cleaning previous build artifacts"
+      - if [ -d "simple-python-flask-app" ]; then rm -rf simple-python-flask-app/*; fi
       - echo "Installing dependencies.."
       # Install Trivy
       - wget https://github.com/aquasecurity/trivy/releases/download/v0.50.1/trivy_0.50.1_Linux-64bit.tar.gz
@@ -37,4 +39,5 @@ artifacts:
   files:
    - '**/*'
   base-directory: simple-python-flask-app
-   - echo "Artifact stored successfully!"
+  name: 'my-artifact'  # Explicit name avoids AWS auto-generated names
+    - echo "Artifact stored succesfully"
